@@ -48,9 +48,22 @@ def get_perc_return(df_filepath, column_name, n=1) -> pd.DataFrame:
     temp_df['%_returns'] = returns 
     return temp_df[['Date', '%_returns']]
 
-if __name__ == '__main__':
-    get_lagged("./data/PPH_pharm_etf.csv", n=2)
-    df = pd.read_csv("./data/output.csv")
+def split_data(df_filepath):
+    temp_df = pd.read_csv(df_filepath)
+    first = temp_df[temp_df['Date'] == '1/7/2019'].index[0]
+    second = temp_df[temp_df['Date'] == '31/12/2019'].index[0]
+    data = temp_df.iloc[:first]
+    psuedo_OOB = temp_df.iloc[first:second+1]
+    OOB = temp_df.iloc[second+1:]
 
-    final_df = get_lagged_df(df, col2lag=["Open_Pharm", "Volume_Pharm"],n=3).head()
-    print(final_df)
+    return data.set_index("Date"), psuedo_OOB.set_index("Date"), OOB.set_index("Date")
+
+if __name__ == '__main__':
+    # get_lagged("./data/PPH_pharm_etf.csv", n=2)
+    # df = pd.read_csv("./data/output.csv")
+
+    # final_df = get_lagged_df(df, col2lag=["Open_Pharm", "Volume_Pharm"],n=3).head()
+    # print(final_df)
+    data, psuedo_OOB, OOB = split_data("./data/output.csv")
+    print(psuedo_OOB.tail())
+    print(OOB.head())
