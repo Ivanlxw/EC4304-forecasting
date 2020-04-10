@@ -49,6 +49,14 @@ def get_perc_return(df_filepath, column_name, n=1) -> pd.DataFrame:
     temp_df['%_returns'] = returns 
     return temp_df[['Date', '%_returns']]
 
+def get_perc_return_df(target, n=1) -> pd.DataFrame:
+    '''
+    Column has to be the name of a column in the csv file
+    REturns data and result columns
+    '''
+    returns = (target - target.shift(n))/target.shift(n)
+    return returns
+
 def split_data(df_filepath):
     temp_df = pd.read_csv(df_filepath)
     first = temp_df[temp_df['Date'] == '1/7/2019'].index[0]
