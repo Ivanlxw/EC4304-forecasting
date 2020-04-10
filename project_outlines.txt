@@ -1,0 +1,24 @@
+To-Do
+1) Benchmark Model - AR(1) *DONE*
+
+
+2) PACF and ACF to find AR(p), MA(q), ARMA(p,q) *DONE*
+   Get AIC/BIC/MSE for comparison of model *DONE*
+
+3) Distributed lag *DONE*
+ - Adding in indicators
+ - AIC/BIC/MSE
+
+4) Forecasting combinations
+Bates Granger combination
+ - Comparing AIC
+ - Point forecast
+ - Pseudo out of sample RMSE
+
+5) Compare every single model's MSE on psuedo out of sample
+6) Write hypothesis to the results
+
+7) MACHINE LEARNING - ENSEMBLE METHODS
+8) DEEP LEARING - RNN, LSTM?
+
+Done

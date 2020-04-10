@@ -25,6 +25,7 @@ def get_lagged_df(df, index_col="Date", col2lag=["Open_SNP500"] , n=1):
     col2lag - list (MUST). list items must be in df's columns
     '''
     temp_df = df
+
     # lag the values
     for collag in col2lag:
         for lag in range(n):
@@ -53,10 +54,8 @@ def split_data(df_filepath):
     first = temp_df[temp_df['Date'] == '1/7/2019'].index[0]
     second = temp_df[temp_df['Date'] == '31/12/2019'].index[0]
     data = temp_df.iloc[:first]
-    psuedo_OOB = temp_df.iloc[first:second+1]
-    OOB = temp_df.iloc[second+1:]
 
-    return data.set_index("Date"), psuedo_OOB.set_index("Date"), OOB.set_index("Date")
+    return data.set_index("Date"), first, second
 
 if __name__ == '__main__':
     # get_lagged("./data/PPH_pharm_etf.csv", n=2)
