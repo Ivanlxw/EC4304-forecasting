@@ -35,6 +35,6 @@ foreach x of varlist *_delta {
 	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/5).`x' if time>5
 	estimates store adl`varlabel'25
 		}
-*estimates stats ar2 adlpharm21 adlpharm22 adlpharm23 adlpharm24 adlpharm25 adlsemicon21 adlsemicon22 adlsemicon23 adlsemicon24 adlsemicon25 adlindustrial21 adlindustrial22 adlindustrial23 adlindustrial24 adlindustrial25 adlenergy21 adlenergy22 adlenergy23 adlenergy24 adlenergy25 adlfinancial21 adlfinancial22 adlfinancial23 adlfinancial24 adlfinancial25 adltech21 adltech22 adltech23 adltech24 adltech25 adlutilities21 adlutilities22 adlutilities23 adlutilities24 adlutilities25 adlconsumer21 adlconsumer22 adlconsumer23 adlconsumer24 adlconsumer25
-
-ardl adjclose_snp500_change adjclose_pharm_delta adjclose_semicon_delta adjclose_industrial_delta adjclose_energy_delta adjclose_financial_delta adjclose_tech_delta adjclose_utilities_delta adjclose_consumer_delta if tin(), maxlags(5) aic
+estimates stats ar2 adlpharm21 adlpharm22 adlpharm23 adlpharm24 adlpharm25 adlsemicon21 adlsemicon22 adlsemicon23 adlsemicon24 adlsemicon25 adlindustrial21 adlindustrial22 adlindustrial23 adlindustrial24 adlindustrial25 adlenergy21 adlenergy22 adlenergy23 adlenergy24 adlenergy25 adlfinancial21 adlfinancial22 adlfinancial23 adlfinancial24 adlfinancial25 adltech21 adltech22 adltech23 adltech24 adltech25 adlutilities21 adlutilities22 adlutilities23 adlutilities24 adlutilities25 adlconsumer21 adlconsumer22 adlconsumer23 adlconsumer24 adlconsumer25
+reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/2).adjclose_pharm_delta L.adjclose_semicon_delta L.adjclose_industrial_delta L(1/3).adjclose_energy_delta L(1/5).adjclose_financial_delta L(1/2).adjclose_tech_delta L(1/3).adjclose_utilities_delta L.adjclose_consumer_delta
+combined221135231
