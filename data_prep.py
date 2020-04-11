@@ -24,7 +24,7 @@ def get_lagged_df(df, index_col="Date", col2lag=["Adj Close_SNP500"] , n=1):
     '''
     col2lag - list (MUST). list items must be in df's columns
     '''
-    temp_df = df
+    temp_df = df.copy()
 
     # lag the values
     for collag in col2lag:
@@ -33,6 +33,7 @@ def get_lagged_df(df, index_col="Date", col2lag=["Adj Close_SNP500"] , n=1):
             temp_df[temp_c_name] = temp_df[collag].shift(lag+1)
     
     ## remove NA values
+    temp_df = temp_df.drop(list(df.columns), axis=1)
     temp_df = temp_df.dropna()
     return temp_df
 
@@ -50,10 +51,6 @@ def get_perc_return(df_filepath, column_name, n=1) -> pd.DataFrame:
     return temp_df[['Date', '%_returns']]
 
 def get_perc_return_df(target, n=1) -> pd.DataFrame:
-    '''
-    Column has to be the name of a column in the csv file
-    REturns data and result columns
-    '''
     returns = (target - target.shift(n))/target.shift(n) * 100
     return returns
 
