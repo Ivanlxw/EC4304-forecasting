@@ -20,7 +20,7 @@ def get_lagged(filepath:str, index_col="Date", col2lag="Adj Close" , n=1) -> pd.
     temp_df = temp_df.dropna()
     return temp_df
 
-def get_lagged_df(df, index_col="Date", col2lag=["Open_SNP500"] , n=1):
+def get_lagged_df(df, index_col="Date", col2lag=["Adj Close_SNP500"] , n=1):
     '''
     col2lag - list (MUST). list items must be in df's columns
     '''
@@ -54,23 +54,18 @@ def get_perc_return_df(target, n=1) -> pd.DataFrame:
     Column has to be the name of a column in the csv file
     REturns data and result columns
     '''
-    returns = (target - target.shift(n))/target.shift(n)
+    returns = (target - target.shift(n))/target.shift(n) * 100
     return returns
 
 def split_data(df_filepath):
     temp_df = pd.read_csv(df_filepath)
     first = temp_df[temp_df['Date'] == '1/7/2019'].index[0]
-    second = temp_df[temp_df['Date'] == '31/12/2019'].index[0]
+    second = temp_df[temp_df['Date'] == '1/10/2019'].index[0]
     data = temp_df.iloc[:first]
 
     return data.set_index("Date"), first, second
 
 if __name__ == '__main__':
-    # get_lagged("./data/PPH_pharm_etf.csv", n=2)
-    # df = pd.read_csv("./data/output.csv")
-
-    # final_df = get_lagged_df(df, col2lag=["Open_Pharm", "Volume_Pharm"],n=3).head()
-    # print(final_df)
     data, psuedo_OOB, OOB = split_data("./data/output.csv")
     print(psuedo_OOB.tail())
     print(OOB.head())
