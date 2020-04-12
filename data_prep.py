@@ -58,9 +58,8 @@ def split_data(df_filepath):
     temp_df = pd.read_csv(df_filepath)
     first = temp_df[temp_df['Date'] == '1/7/2019'].index[0]
     second = temp_df[temp_df['Date'] == '1/10/2019'].index[0]
-    data = temp_df.iloc[:first]
 
-    return data.set_index("Date"), first, second
+    return temp_df.set_index("Date"), first, second
 
 if __name__ == '__main__':
     data, psuedo_OOB, OOB = split_data("./data/output.csv")

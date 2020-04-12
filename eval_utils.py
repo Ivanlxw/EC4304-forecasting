@@ -27,10 +27,10 @@ def forecast_ARMA_ADL(full_df, model,start_idx, end_idx,):
     lagged_fulldf = lagged_fulldf.drop("Adj Close_SNP500", axis=1)
     lagged_fulldf = data_prep.get_lagged_df(full_df,col2lag=list(full_df.columns), n=p)
     ## ignore const and ar components to get exog data.
-    psuedo_OOB = lagged_fulldf[list(model.params.keys()[1:-(p+q)])].iloc[start_idx-p+1:end_idx-p+1] 
+    temp_psuedo_OOB = lagged_fulldf[list(model.params.keys()[:-(p+q)])].iloc[start_idx-p+1:end_idx-p+1] 
 
-    psuedo_OOB = psuedo_OOB.iloc[:steps].reset_index(drop=True)
-    res2 = list(model.forecast(steps=steps, exog=psuedo_OOB))
+    temp_psuedo_OOB = temp_psuedo_OOB.iloc[:steps].reset_index(drop=True)
+    res2 = list(model.forecast(steps=steps, exog=temp_psuedo_OOB))
     nice_result = {
         "forecast": res2[0].tolist(),
         "sd": res2[1].tolist(),
