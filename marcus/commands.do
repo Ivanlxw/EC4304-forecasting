@@ -1,17 +1,17 @@
+import delimited C:\Users\maple\Documents\GitHub\EC4304-forecasting\marcus\data\output.csv
+
 gen dcode = date(date, "DMY")
 gen time = dofd(dcode)
 format %td time
-bcal create sp500, from(time)
+bcal create sp500, from(time) replace
 drop time
 gen time = bofd("sp500", dcode)
 tsset time
 
-*first prepare the variables
 foreach x of varlist adjclose_* {
-	gen `x'_delta = 100*(log(`x') - log(L.`x'))
-		} 
-
-
+    gen `x'_delta = 100*(log(`x') - log(L.`x'))
+        } 
+		
 label variable adjclose_pharm_delta pharm
 label variable adjclose_semicon_delta semicon
 label variable adjclose_industrial_delta industrial
@@ -20,45 +20,32 @@ label variable adjclose_financial_delta financial
 label variable adjclose_tech_delta tech
 label variable adjclose_utilities_delta utilities
 label variable adjclose_consumer_delta consumer
+rename adjclose_snp500_delta adjclose_snp500_change
 
-*check granger causality
 foreach x of varlist *_delta {
-	newey adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/5).`x', lag(5)
-	testparm L(1/5).`x'
-	}
+    gen `x'_lag = L.`x'
+    }
 	
-*check seriel correlation with robust errors
-foreach x of varlist *_delta {
-	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/5).`x', r
-	testparm L(1/5).`x'
-	}
-	
-foreach x of varlist *_delta {
-	gen `x'_lag = L.`x'
-	}
-	
-	
-reg adjclose_snp500_change L(1/2).adjclose_snp500_change
-estimates store ar2
+tsappend, add(5)
 
-*next perform adl regression loops and store estat
-foreach x of varlist *_delta {
-	local varlabel : variable label `x'
-	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L.`x' if time>5
-	estimates store adl`varlabel'21
-	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/2).`x' if time>5
-	estimates store adl`varlabel'22
-	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/3).`x' if time>5
-	estimates store adl`varlabel'23
-	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/4).`x' if time>5
-	estimates store adl`varlabel'24
-	reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/5).`x' if time>5
-	estimates store adl`varlabel'25
-		}
-estimates stats ar2 adlpharm21 adlpharm22 adlpharm23 adlpharm24 adlpharm25 adlsemicon21 adlsemicon22 adlsemicon23 adlsemicon24 adlsemicon25 adlindustrial21 adlindustrial22 adlindustrial23 adlindustrial24 adlindustrial25 adlenergy21 adlenergy22 adlenergy23 adlenergy24 adlenergy25 adlfinancial21 adlfinancial22 adlfinancial23 adlfinancial24 adlfinancial25 adltech21 adltech22 adltech23 adltech24 adltech25 adlutilities21 adlutilities22 adlutilities23 adlutilities24 adlutilities25 adlconsumer21 adlconsumer22 adlconsumer23 adlconsumer24 adlconsumer25
-reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/2).adjclose_pharm_delta L.adjclose_semicon_delta L.adjclose_industrial_delta L(1/3).adjclose_energy_delta L(1/5).adjclose_financial_delta L(1/2).adjclose_tech_delta L(1/3).adjclose_utilities_delta L.adjclose_consumer_delta
-combined311135132
-ardl adjclose_snp500_change adjclose_semicon_delta_lag adjclose_industrial_delta_lag adjclose_energy_delta_lag adjclose_financial_delta_lag adjclose_tech_delta_lag adjclose_utilities_delta_lag adjclose_consumer_delta_lag, maxcombs(8398080) maxlag(4) aic
-combined301135132
-ardl adjclose_snp500_change adjclose_pharm_delta_lag adjclose_semicon_delta_lag adjclose_industrial_delta_lag adjclose_energy_delta_lag adjclose_financial_delta_lag adjclose_tech_delta_lag adjclose_utilities_delta_lag adjclose_consumer_delta_lag, maxcombs(8398080) maxlag(4) aic
-221135231
+reg adjclose_snp500_change L(1/2).adjclose_snp500_change if time<2571
+predict ar2in
+
+forvalues p=1/5{
+    local q = `p'+1
+    qui reg adjclose_snp500_change L(`p'/`q').adjclose_snp500_change
+    predict ar2`p'
+    predict ar2sf`p', stdf
+    gen ar2`p'L68 = ar2`p'-0.995*ar2sf`p'
+    gen ar2`p'U68 = ar2`p'+0.995*ar2sf`p'
+    gen ar2`p'L50 = ar2`p'-0.675*ar2sf`p'
+    gen ar2`p'U50 = ar2`p'+0.675*ar2sf`p'
+}
+
+egen ar2p2=rowfirst(ar21 ar22 ar23 ar24 ar25) if time>=2571
+egen ar2pL68=rowfirst(ar21L68 ar22L68 ar23L68 ar24L68 ar25L68) if time>=2571
+egen ar2pU68=rowfirst(ar21U68 ar22U68 ar23U68 ar24U68 ar25U68) if time>=2571
+egen ar2pL50=rowfirst(ar21L50 ar22L50 ar23L50 ar24L50 ar25L50) if time>=2571
+egen ar2pU50=rowfirst(ar21U50 ar22U50 ar23U50 ar24U50 ar25U50) if time>=2571
+
+tsline adjclose_snp500_change ar2in ar2p2 ar2pL50 ar2pU50 ar2pL68 ar2pU68 if time>=2545, title(adj_close_SnP_%chg 50% 68% fan with AR2 Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
