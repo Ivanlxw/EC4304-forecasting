@@ -49,6 +49,7 @@ foreach x of varlist *_delta {
 foreach x of varlist *_delta {
     corrgram `x'
     }
+
 foreach x of varlist *_delta {
     reg adjclose_snp500_change L(1/2).adjclose_snp500_change L(1/5).`x', r
     testparm L(1/5).`x'
@@ -95,7 +96,8 @@ forvalues p=1/5{
 
 egen ar2p2=rowfirst(ar21 ar22 ar23 ar24 ar25) if time>=2388
 
-tsline adjclose_snp500_change ar2in ar2p2  if time>=2388, title(adj_close_SnP_%chg 50% 68% fan with AR2 Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
+tsline adjclose_snp500_change ar2in ar2p2  if time>=2388, title(adj_close_SnP_%chg with AR2 Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
+tsline adjclose_snp500_change ar2in ar2p2  if time>=2540, title(adj_close_SnP_%chg with AR2 Model zoom) lpattern (solid solid solid longdash longdash shortdash shortdash)
 
 reg adjclose_snp500_change L(1/2).adjclose_snp500_change L.adjclose_industrial_delta if time<2388
 predict adl21in
@@ -107,9 +109,10 @@ forvalues p=1/5{
     predict adl21sf`p', stdf
 }
 
-egen adl21p2=rowfirst(adl211 adl212 adl213 adl214 adl215) if time>=2452
+egen adl21p2=rowfirst(adl211 adl212 adl213 adl214 adl215) if time>=2388
 
-tsline adjclose_snp500_change adl21in adl21p2 if time>=2388, title(adj_close_SnP_%chg 50% 68% fan with ADL21 Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
+tsline adjclose_snp500_change adl21in adl21p2 if time>=2388, title(adj_close_SnP_%chg with ADL21 Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
+tsline adjclose_snp500_change adl21in adl21p2 if time>=2540, title(adj_close_SnP_%chg with ADL21 Model zoom) lpattern (solid solid solid longdash longdash shortdash shortdash)
 
 reg adjclose_snp500_change L(1/2).adjclose_snp500_change L.adjclose_semicon_delta L.adjclose_industrial_delta L(1/3).adjclose_energy_delta L(1/5).adjclose_financial_delta L.adjclose_tech_delta L(1/3).adjclose_utilities_delta L(1/2).adjclose_consumer_delta if time<2388
 predict combin
@@ -123,6 +126,7 @@ forvalues p=1/5{
     predict combsf`p', stdf
 }
 
-egen combp2=rowfirst(comb1 comb2 comb3 comb4 comb5) if time>=2452
+egen combp2=rowfirst(comb1 comb2 comb3 comb4 comb5) if time>=2388
 
-tsline adjclose_snp500_change combin combp2 if time>=2388, title(adj_close_SnP_%chg 50% 68% fan with COMB Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
+tsline adjclose_snp500_change combin combp2 if time>=2388, title(adj_close_SnP_%chg with COMB Model) lpattern (solid solid solid longdash longdash shortdash shortdash)
+tsline adjclose_snp500_change combin combp2 if time>=2540, title(adj_close_SnP_%chg with COMB Model zoom) lpattern (solid solid solid longdash longdash shortdash shortdash)
